@@ -27,6 +27,7 @@ function provision_blockchain {
 
 function get_blockchain_connection_profile_inner {
     do_curl \
+        -k \
         -H 'Content-Type: application/json' \
         -H 'Accept: application/json' \
         -u ${BLOCKCHAIN_KEY}:${BLOCKCHAIN_SECRET} \
@@ -69,7 +70,7 @@ function wait_for_peer_to_stop {
     while [[ "$PEER_STATUS" = "running" ]]
     do
         sleep 10
-        STATUS=$(do_curl -H 'Accept: application/json' -u ${BLOCKCHAIN_KEY}:${BLOCKCHAIN_SECRET} ${BLOCKCHAIN_URL}/api/v1/networks/${BLOCKCHAIN_NETWORK_ID}/nodes/status)
+        STATUS=$(do_curl -k -H 'Accept: application/json' -u ${BLOCKCHAIN_KEY}:${BLOCKCHAIN_SECRET} ${BLOCKCHAIN_URL}/api/v1/networks/${BLOCKCHAIN_NETWORK_ID}/nodes/status)
         PEER_STATUS=$(echo ${STATUS} | jq --raw-output ".[\"${PEER}\"].status")
     done
 }
@@ -78,6 +79,7 @@ function stop_blockchain_peer {
     PEER=$1
     do_curl \
         -X POST \
+        -k \
         -H 'Accept: application/json' \
         -u ${BLOCKCHAIN_KEY}:${BLOCKCHAIN_SECRET} \
         ${BLOCKCHAIN_URL}/api/v1/networks/${BLOCKCHAIN_NETWORK_ID}/nodes/${PEER}/stop
@@ -109,6 +111,7 @@ function upload_admin_cert {
 EOF
     do_curl \
         -X POST \
+        -k \
         -H 'Content-Type: application/json' \
         -H 'Accept: application/json' \
         -u ${BLOCKCHAIN_KEY}:${BLOCKCHAIN_SECRET} \
@@ -121,6 +124,7 @@ function sync_channel_certs {
     CHANNEL=$1
     do_curl \
         -X POST \
+        -k \
         -H 'Accept: application/json' \
         -u ${BLOCKCHAIN_KEY}:${BLOCKCHAIN_SECRET} \
         ${BLOCKCHAIN_URL}/api/v1/networks/${BLOCKCHAIN_NETWORK_ID}/channels/${CHANNEL}/sync
